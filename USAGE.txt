@@ -1,0 +1,1 @@
+./get-schema --targetdir '.' --pattern 'Deposit_UC.*\.json' --outputpath 'master.json'
