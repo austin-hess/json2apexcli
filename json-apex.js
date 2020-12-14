@@ -6,13 +6,21 @@ const argv = yargs(hideBin(process.argv))
         'get-schema',
         'Generate JSON Schema file for given JSON data files',
         yargs => {
-            yargs.option('f', {
-                alias: 'files',
-                type: 'array',
+            yargs.option('d', {
+                alias: 'targetdir',
+                type: 'string',
                 demand: true,
                 requiresArg: true,
-                describe: 'One or more JSON data files',
-                help: 'One or more JSON data files'
+                describe: 'Directory in which to search for the given pattern in filenames',
+                help: 'Directory in which to search for the given pattern in filenames'
+            }),
+            yargs.option('p', {
+                alias: 'pattern',
+                type: 'string',
+                demand: true,
+                requiresArg: true,
+                describe: 'Python-style regex surrounded in quotes to match on filenames',
+                help: 'Python-style regex surrounded in quotes to match on filenames'
             }),
             yargs.option('o', {
                 alias: 'outputpath',
@@ -64,7 +72,7 @@ const argv = yargs(hideBin(process.argv))
 switch (argv._[0]) {
     case 'get-schema':
         const getSchema = require('./get-schema.js');
-        getSchema(argv.f, argv.o);
+        getSchema(argv.d, argv.p, argv.o);
         break;
     case 'generate-apex':
         const genApex = require('./generate-apex.js');

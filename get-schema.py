@@ -8,21 +8,24 @@ import sys
 import re
 
 @click.command(
-    help="USAGE: ./get-schema.py --files file1.json file2.json file3.json --outputpath master-schema.json"
+    help="USAGE: ./get-schema.py --targetdir './' --pattern 'Deposit_UC.*\.json' --outputpath 'master-schema.json'"
 )
 @click.option(
+    '-d',
     '--targetdir', 
     'd', 
     multiple=False,
     default=None, 
     help="Use --targetdir to include a target directory")
 @click.option(
+    '-p',
     '--pattern', 
     'p', 
     multiple=False, 
     default=None, 
     help="Use --pattern to include regex that looks for files in the given directory")
 @click.option(
+    '-o',
     '--outputpath',
     'o',
     multiple=False,
@@ -30,10 +33,6 @@ import re
     help="Use --outputpath to specify the path of the output JSON file"
 )
 def main(d,p,o):
-
-    print(d)
-    print(p)
-    print(o)
 
     dir = '{}'.format(d)
     matching_files = [f for f in os.listdir(dir) if re.match(p,f) is not None]

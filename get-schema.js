@@ -1,8 +1,8 @@
 const { spawn } = require('child_process');
 
-const getSchema = (dataFiles, outputPath) => {
+const getSchema = (targetDir, pattern, outputPath) => {
 
-    const pyProg = spawn('python', ['./get-schema.py', '--files', ...dataFiles, '--outputpath', outputPath]);
+    const pyProg = spawn('python', ['./get-schema.py', '-d', targetDir, '-p', pattern, '-o', outputPath]);
 
     pyProg.stdout.on('data', data => {
         console.log(data.toString());
