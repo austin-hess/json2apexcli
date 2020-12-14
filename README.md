@@ -26,9 +26,10 @@ pip install -r requirements.txt
 ##### Generate Apex classes from JSON schema file
 ```
 Example:
-./json-apex.js generate-apex --schemafile ./master.json --prefix CS_ --classname Payload
+./json-apex.js generate-apex --schemafile <schema-file-path> --prefix <class-prefix> --classname <class-name>
 
 --schemafile    Path of the JSON schema file to use for generating the classes
 --prefix        String to prefix Apex classes with
 --classname     Name of the parent class for the schema
+				Example: CS_Payload parent class would include references to other types defined in JSON schema
 ```
