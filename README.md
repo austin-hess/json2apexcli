@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ### Usage
 ##### Generate JSON Schema from JSON data files
 ```
-./json-apex.js get-schema --targetdir ./ --pattern 'Deposit_UC.*.\json' --outputpath master-schema.json
+./json-apex.js get-schema --targetdir ./ --pattern 'Deposit_UC.*\.json' --outputpath master-schema.json
 
 --targetdir     The directory in which to search for files
 --pattern       Python-style regex with which to match on filenames
