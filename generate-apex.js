@@ -30,7 +30,7 @@ function parseObject(obj, prefix, objName, typeRefs, primitiveTypes, classes) {
             if (prop.type == 'array') {
                 if (primitiveTypes.includes(prop.items.type)) {
                     let varType =  prop.items.type.charAt(0).toUpperCase() + prop.items.type.slice(1);
-                    cls.withProp(new ApexClassProperty(prefix + varType + '[]', propName));
+                    cls.withProp(new ApexClassProperty(varType + '[]', propName));
                 }
                 else if (prop.items.type == 'object') {
                     parseObject(prop.items, prefix, propType, typeRefs, primitiveTypes, classes);

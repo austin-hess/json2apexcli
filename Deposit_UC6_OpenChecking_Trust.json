@@ -1,0 +1,149 @@
+{
+	"governingLawState": "MI",
+	"transactionDate": "11/02/2020",
+  "applicationDate": "10/15/2020",
+  "activityType": 1,
+	"applicants": {
+    "businesses": [
+      {
+        "ID": "987654",
+        "name": "Deposit Trust",
+        "entityType": 11,
+        "tin": "123456789",
+        "parentCompanyIDs": "",
+        "dba": "",
+        "natureOfBusiness": "",
+        "establishedDate": "09/15/2001",
+        "principalOfficeState": "MI",
+        "principalOfficeCity": "Grand Rapids",
+        "address": {
+          "primaryAddressLine": "123 Main St.",
+          "state": "MI",
+          "city": "Grand Rapids",
+          "postalCode": "49546"
+        },
+        "isEngagesInInternetGambling": false,
+        "signers": [
+          {
+            "ID": "55555",
+            "firstName": "Jim",
+            "middleName": "James",
+            "lastName": "Smith",
+            "suffixName": "Jr",
+            "address": {
+              "primaryAddressLine": "123 Test St.",
+              "state": "MI",
+              "city": "Grand Rapids",
+              "postalCode": "49546"
+            },
+            "dateOfBirth": "06/03/1954",
+            "ssn": "555666777",
+            "isTrustee": true,
+            "isTrustBeneficiary": false,
+            "isTrustCreator": true,
+            "isBeneficialOwner": true,
+            "isBeneficialOwnerManager": false,
+            "isBeneficialOwnerCertifier": false,
+            "isTINCertifier": false,
+            "capacityDescription": "Settlor and Trustee"
+          },
+          {
+            "ID": "66666",
+            "firstName": "Carrie",
+            "lastName": "Wilson",
+            "address": {
+              "primaryAddressLine": "123 Carrie St.",
+              "state": "MI",
+              "city": "Grand Rapids",
+              "postalCode": "49546"
+            },
+            "dateOfBirth": "06/09/1969",
+            "ssn": "111222333",
+            "isTrustee": true,
+            "isTrustBeneficiary": false,
+            "isTrustCreator": true,
+            "isBeneficialOwner": true,
+            "isBeneficialOwnerManager": true,
+            "isBeneficialOwnerCertifier": true,
+            "isTINCertifier": true,
+            "capacityDescription": "Settlor and Trustee"
+          },
+          {
+            "ID": "77777",
+            "firstName": "Patricia",
+            "middleName": "Beth",
+            "lastName": "Drake",
+            "address": {
+              "primaryAddressLine": "123 Drake St.",
+              "state": "MI",
+              "city": "Grand Rapids",
+              "postalCode": "49546"
+            },
+            "dateOfBirth": "07/03/1979",
+            "ssn": "222333444",
+            "isTrustee": false,
+            "isTrustBeneficiary": true,
+            "isTrustCreator": false,
+            "isBeneficialOwner": false,
+            "isBeneficialOwnerManager": false,
+            "isBeneficialOwnerCertifier": false,
+            "isTINCertifier": false,
+            "capacityDescription": "Daughter"
+          }
+        ]
+      }
+    ]
+	},
+	"accounts": [
+    {
+      "ID": 516511,
+      "number": "54654444",
+      "type": 2,
+      "ownershipStructure": 1,
+      "primaryOwnerID": "987654",
+      "productCode": "BusCheck",
+      "productDescription": "Business Checking",
+      "owners": [
+        "987654"
+      ],
+      "depositAmount": 10000.00,
+      "statementMailingAddress": {
+        "primaryAddressLine": "999 Autumn St",
+        "city": "Austin",
+        "state": "NC",
+        "postalCode": "49546"
+      }
+    }
+	],
+	"financialInstitution": {
+		"name": "CS Bank",
+		"address": {
+			"primaryAddressLine": "12345 Bank Ave",
+			"city": "Grand Rapids",
+			"state": "MI",
+			"postalCode": "49546"
+		},
+		"decisionOfficer": {
+			"name": "Bill Thomas",
+			"title": "Sr. Underwriter"
+		},
+		"documentSigner": {
+			"name": "Aliyah Brown",
+			"title": "Branch Manager"
+		},
+		"documentPreparer": {
+			"name": "Aliyah Brown",
+			"title": "Branch Manager"
+		},
+		"openingBranch": {
+			"name": "Waterworks",
+			"code": "X5555",
+			"address": {
+				"primaryAddressLine": "123 Branch St.",
+				"city": "Grand Rapids",
+				"state": "MI",
+				"postalCode": "49546"
+			}
+		}
+	}
+}
