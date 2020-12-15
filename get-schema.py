@@ -36,11 +36,15 @@ def main(d,p,o):
 
     dir = '{}'.format(d)
     matching_files = [f for f in os.listdir(dir) if re.match(p,f) is not None]
+    print(matching_files)
+    print(dir)
+    print(p)
+    print(o)
 
     builder = SchemaBuilder()
 
     for file in matching_files:
-        with open(file) as curFile:
+        with open('{}/{}'.format(dir,file)) as curFile:
             builder.add_object(json.loads(curFile.read()))
 
     with open(o, 'w+') as curFile:

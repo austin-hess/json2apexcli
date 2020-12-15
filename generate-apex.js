@@ -1,65 +1,81 @@
 const { ApexClass, ApexClassProperty } = require('./apex');
+const { capitalizeFirstChar } = require('./stringUtil');
+const keywords = require('./keywords');
 const fs = require('fs');
 
-function parseObject(obj, prefix, objName, typeRefs, primitiveTypes, classes) {
+function parseObject(object, prefix, objectName, primitives, existingTypes, classes) {
 
-    let cls = new ApexClass(prefix + objName);
+    var currentClass = new ApexClass(`${prefix}${objectName}`);
 
-    for (var propName in obj.properties) {
+    for (var propertyName in object.properties) {
 
-        let propType = propName.charAt(0).toUpperCase() + propName.slice(1);
+        let propertyType = capitalizeFirstChar(propertyName);
 
-        if (typeRefs.includes(propType)) {
-            let prop = new ApexClassProperty(propType, propName);
-            cls.withProp(prop);
+        if (existingTypes.includes(propertyType)) {
+
+            addToClass(currentClass, propertyType, propertyName);
         }
         else {
-            let prop = obj.properties[propName];
+            let propertyObj = object.properties[propertyName];
             
-            if (primitiveTypes.includes(prop.type)) {
-                let varType =  prop.type.charAt(0).toUpperCase() + prop.type.slice(1);
+            if (primitives.includes(propertyObj.type)) {
 
-                if (varType == 'Number') varType = 'Decimal';
-                
-                cls.withProp(new ApexClassProperty(varType, propName));
+                let primitiveTypeName =  capitalizeFirstChar(propertyObj.type);
+                if (primitiveTypeName == 'Number') primitiveTypeName = 'Decimal';
+               
+                addToClass(currentClass, primitiveTypeName, propertyName);
             }
-            if (prop.type == 'object') {
-                parseObject(prop, prefix, propType, typeRefs, primitiveTypes, classes);
-                cls.withProp(new ApexClassProperty(prefix + propType,propName));
+            if (propertyObj.type == 'object') {
+
+                let type = parseObject(propertyObj, prefix, propertyType, primitives,existingTypes, classes);
+
+                addToClass(currentClass, type, propertyName);
             }
-            if (prop.type == 'array') {
-                if (primitiveTypes.includes(prop.items.type)) {
-                    let varType =  prop.items.type.charAt(0).toUpperCase() + prop.items.type.slice(1);
-                    cls.withProp(new ApexClassProperty(varType + '[]', propName));
+            if (propertyObj.type == 'array') {
+
+                if (primitives.includes(propertyObj.items.type)) {
+
+                    let primitiveTypeName =  capitalizeFirstChar(propertyObj.items.type);
+                    if (primitiveTypeName == 'Number') primitiveTypeName = 'Decimal';
+                    addToClass(currentClass, `${primitiveTypeName}[]`, propertyName);
                 }
-                else if (prop.items.type == 'object') {
-                    parseObject(prop.items, prefix, propType, typeRefs, primitiveTypes, classes);
-                    cls.withProp(new ApexClassProperty(prefix + propType + '[]',propName));
+                else if (propertyObj.items.type == 'object') {
+
+                    let type = parseObject(propertyObj.items, prefix, propertyType, primitives, existingTypes, classes);
+                    addToClass(currentClass, `${type}[]`, propertyName);
                 }
             }
 
-            console.log(cls);
         }
     }
 
-    classes.push(cls);
-    typeRefs.push(objName);
+    classes.push(currentClass);
+    existingTypes.push(currentClass.name);
+
+    return currentClass.name;
+}
+
+function addToClass(cls, propertyType, propertyName) {
+    propertyName = keywords.includes(propertyName) ? `${propertyName}_x` : propertyName;
+    cls.withProp(new ApexClassProperty(propertyType, propertyName));
 }
 
 module.exports = (schemaPath, prefix, requestClassName) => {
+
     const data = JSON.parse(fs.readFileSync(schemaPath, 'utf-8'));
 
-    var primitiveTypes = ['string', 'number', 'integer', 'boolean'];
-    var typeRefs = [];
+    var primitives = ['string', 'number', 'integer', 'boolean'];
     var classes = [];
-    parseObject(data, 'CS_', 'Payload', typeRefs, primitiveTypes, classes);
+    var existingTypes = [];
+
+    parseObject(data,'CS_','Payload', primitives, existingTypes, classes);
     
     let metadataFileContent = '<?xml version="1.0" encoding="UTF-8"?>\n<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">\n\t<apiVersion>49.0</apiVersion>\n\t<status>Active</status>\n</ApexClass>';
     
-    classes.forEach(cls => {
-        let filename = `${cls.name}.cls`;
-        fs.writeFileSync(`./${filename}`, cls.generate(), { flag: 'a'});
-        fs.writeFileSync(`./${cls.name}.cls-meta.xml`,metadataFileContent, {flag: 'a'});
+    classes.forEach(currentClass => {
+        let filename = `${currentClass.name}.cls`;
+        fs.writeFileSync(`./${filename}`, currentClass.generate(), { flag: 'w'});
+        fs.writeFileSync(`./${currentClass.name}.cls-meta.xml`,metadataFileContent, {flag: 'w'});
     });
 }
 
