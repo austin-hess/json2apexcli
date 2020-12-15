@@ -60,7 +60,7 @@ function addToClass(cls, propertyType, propertyName) {
     cls.withProp(new ApexClassProperty(propertyType, propertyName));
 }
 
-module.exports = (schemaPath, prefix, requestClassName) => {
+module.exports = (schemaPath, prefix, requestClassName, outputDir) => {
 
     const data = JSON.parse(fs.readFileSync(schemaPath, 'utf-8'));
 
@@ -68,14 +68,14 @@ module.exports = (schemaPath, prefix, requestClassName) => {
     var classes = [];
     var existingTypes = [];
 
-    parseObject(data,'CS_','Payload', primitives, existingTypes, classes);
+    parseObject(data, prefix, requestClassName, primitives, existingTypes, classes);
     
     let metadataFileContent = '<?xml version="1.0" encoding="UTF-8"?>\n<ApexClass xmlns="http://soap.sforce.com/2006/04/metadata">\n\t<apiVersion>49.0</apiVersion>\n\t<status>Active</status>\n</ApexClass>';
     
     classes.forEach(currentClass => {
         let filename = `${currentClass.name}.cls`;
-        fs.writeFileSync(`./${filename}`, currentClass.generate(), { flag: 'w'});
-        fs.writeFileSync(`./${currentClass.name}.cls-meta.xml`,metadataFileContent, {flag: 'w'});
+        fs.writeFileSync(`${outputDir}/${filename}`, currentClass.generate(), { flag: 'w'});
+        fs.writeFileSync(`${outputDir}/${currentClass.name}.cls-meta.xml`,metadataFileContent, {flag: 'w'});
     });
 }
 

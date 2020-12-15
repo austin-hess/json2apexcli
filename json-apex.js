@@ -62,6 +62,15 @@ const argv = yargs(hideBin(process.argv))
                 requiresArg: true,
                 describe: 'Name of the resulting class',
                 help: 'Name of the resulting class'
+            }),
+            yargs.option('o', {
+                alias: 'outputdir',
+                type: 'string',
+                demand: false,
+                requiresArg: true,
+                describe: 'Output directory of resulting files',
+                help: 'Output directory of resulting files',
+                default: '.'
             })
         }
     )
@@ -76,7 +85,7 @@ switch (argv._[0]) {
         break;
     case 'generate-apex':
         const genApex = require('./generate-apex.js');
-        genApex(argv.s, argv.p, argv.c);
+        genApex(argv.s, argv.p, argv.c, argv.o);
         break;
 }
 
