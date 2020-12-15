@@ -1,5 +1,5 @@
 const { ApexClass, ApexClassProperty } = require('./apex');
-const { capitalizeFirstChar } = require('./stringUtil');
+const { capitalizeFirstChar } = require('./utils');
 const keywords = require('./keywords');
 const fs = require('fs');
 
