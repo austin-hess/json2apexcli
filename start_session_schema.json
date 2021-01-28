@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "url": { "type": "string" },
+    "session": {
+      "type": "object",
+      "properties": { "id": { "type": "string" } },
+      "required": ["id"]
+    },
+    "messages": { "type": "array", "items": { "type": "string" } },
+    "dclResponse": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "dataElements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": { "type": "string" },
+              "value": { "type": ["null", "string"] },
+              "documentReferences": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "trigger": { "type": "boolean" },
+              "evaluationStatus": { "type": "integer" },
+              "supplemental": { "type": "boolean" },
+              "keepValue": { "type": "boolean" },
+              "validValues": { "type": "array", "items": { "type": "string" } },
+              "invalidValues": { "type": "array" },
+              "associatedId": { "type": ["null", "string"] },
+              "transactionValuePath": { "type": "string" },
+              "calculated": { "type": "boolean" },
+              "note": { "type": ["null", "string"] },
+              "source": { "type": "integer" },
+              "locked": { "type": "boolean" },
+              "tag": { "type": ["null", "string"] },
+              "workflowHidden": { "type": "boolean" },
+              "workflowLocked": { "type": "boolean" },
+              "workflowConfirm": { "type": "boolean" },
+              "isConfirmed": { "type": "boolean" },
+              "supplementalDefault": { "type": "boolean" },
+              "associations": {
+                "type": "array", 
+                "items": { "type": "string" } 
+              },
+              "destination": { "type": ["null", "string"] },
+              "savoryId": { "type": "null" },
+              "isRequired": { "type": "boolean" },
+              "isBlankValue": { "type": "boolean" }
+            },
+            "required": [
+              "associatedId",
+              "associations",
+              "calculated",
+              "destination",
+              "documentReferences",
+              "evaluationStatus",
+              "invalidValues",
+              "isBlankValue",
+              "isConfirmed",
+              "isRequired",
+              "keepValue",
+              "key",
+              "locked",
+              "note",
+              "savoryId",
+              "source",
+              "supplemental",
+              "supplementalDefault",
+              "tag",
+              "transactionValuePath",
+              "trigger",
+              "validValues",
+              "value",
+              "workflowConfirm",
+              "workflowHidden",
+              "workflowLocked"
+            ]
+          }
+        },
+        "selectedDocuments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "formId": { "type": "string" },
+              "associations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "suffix": { "type": "string" },
+                    "associationType": { "type": "string" },
+                    "sourceType": { "type": "string" }
+                  },
+                  "required": ["associationType", "sourceType", "suffix"]
+                }
+              },
+              "path": { "type": "string" },
+              "formVersion": { "type": "string" },
+              "attributes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "value": { "type": "string" }
+                  },
+                  "required": ["name", "value"]
+                }
+              }
+            },
+            "required": [
+              "associations",
+              "attributes",
+              "formId",
+              "formVersion",
+              "path"
+            ]
+          }
+        },
+        "transactionDataKey": { "type": "string" },
+        "status": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "message": { "type": "string" },
+              "dataElementKeys": {
+                "anyOf": [
+                  { "type": "null" },
+                  { "type": "array", "items": { "type": "string" } }
+                ]
+              },
+              "code": { "type": "integer" },
+              "associatedIds": {
+                "anyOf": [
+                  { "type": "null" },
+                  { "type": "array", "items": { "type": "string" } }
+                ]
+              },
+              "documentFormId": { "type": ["null", "string"] }
+            },
+            "required": [
+              "associatedIds",
+              "code",
+              "dataElementKeys",
+              "documentFormId",
+              "message"
+            ]
+          }
+        },
+        "selectedDataFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": { "fileName": { "type": "string" } },
+            "required": ["fileName"]
+          }
+        }
+      },
+      "required": [
+        "dataElements",
+        "id",
+        "selectedDataFiles",
+        "selectedDocuments",
+        "status",
+        "transactionDataKey"
+      ]
+    },
+    "runtimeDataCollectionStatus": {
+      "type": "object",
+      "properties": {
+        "dataCollectionAvailable": { "type": "boolean" },
+        "dataCollectionRequired": { "type": "boolean" },
+        "reasons": {
+          "type": "object",
+          "properties": {
+            "dslComplete": { "type": "boolean" },
+            "rmdComplete": { "type": "boolean" },
+            "transactionDataComplete": { "type": "boolean" }
+          },
+          "required": ["dslComplete", "rmdComplete", "transactionDataComplete"]
+        }
+      },
+      "required": [
+        "dataCollectionAvailable",
+        "dataCollectionRequired",
+        "reasons"
+      ]
+    }
+  },
+  "required": [
+    "dclResponse",
+    "messages",
+    "runtimeDataCollectionStatus",
+    "session",
+    "url"
+  ]
+}

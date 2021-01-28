@@ -27,6 +27,7 @@ class ApexGenerator:
         curr_class = apex.Class("{}{}".format(prefix, name))
 
         for name, prop in schema['properties'].items():
+            name = name if len(name+prefix) <= 40 else name[:39-len(prefix)]
             data_type = prop['type']
 
             if data_type in PRIMITIVES:
@@ -46,8 +47,13 @@ class ApexGenerator:
 
                 for i, p in enumerate(props_to_process):
 
-                    if p['type'] in PRIMITIVES:
-                        data_type = 'decimal' if p['type'] == 'number' else p['type']
+                    if p['type'] in PRIMITIVES or isinstance(p['type'], list):
+                        data_type = ''
+                        if isinstance(p['type'], list):
+                            data_type = p['type'][0]
+                        else:
+                            data_type = p['type']
+                        data_type = 'decimal' if data_type == 'number' else data_type
                         curr_class.members.append(
                             apex.Member(name if i < 1 else name + "_" + str(i), "{}[]".format(data_type.capitalize()))
                         )
@@ -66,6 +72,7 @@ class ApexGenerator:
                         curr_class.members.append(
                             apex.Member(name if i < 1 else name + "_" + str(i),"{}{}[]".format(prefix,var_name.capitalize()))
                         )
+
                     
             elif data_type == 'object':
                 print("Object: {}".format(name))
