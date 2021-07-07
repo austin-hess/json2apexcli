@@ -1,20 +1,28 @@
 import apex
 
 PRIMITIVES = ['string', 'number', 'integer', 'boolean']
+OUTPUT_PATH = './';
 
-class ApexGenerator:
-    @staticmethod
-    def from_json_schema(json_schema, name, *args, **kwargs):
-        classes = []
-        class_count = {}
-        name = name
-        prefix = "" if "prefix" not in kwargs else kwargs["prefix"]
-        output_path = "./" if "output_path" not in kwargs else kwargs["output_path"]
-        ApexGenerator.parse_json_schema(json_schema, prefix, name, classes, class_count)
+class Json2ApexGenerator:
 
-        for _class in classes:
+    def __init__(self, json_schema):
+        self.json_schema = json_schema
+        self.output_path = OUTPUT_PATH
+
+    def set_prefix(self, prefix):
+        self.prefix = prefix
+
+    def set_output_path(self, output_path):
+        self.output_path = output_path
+
+    def generate(self, name):
+        self.classes = []
+        self.class_count = {}
+        self.parse_json_schema(self.json_schema, name)
+
+        for _class in self.classes:
             filename = "{}{}".format(
-                output_path + '/' if output_path[-1] != '/' else output_path,
+                self.output_path + '/' if self.output_path[-1] != '/' else self.output_path,
                 _class.name
             )
             with open("{}{}".format(filename, '.cls'), 'w') as f:
@@ -22,74 +30,61 @@ class ApexGenerator:
             with open("{}{}".format(filename, '.cls-meta.xml'), 'w+') as f:
                 f.write(apex.Class.write_meta())
     
-    @staticmethod
-    def parse_json_schema(schema, prefix, name, classes, class_count):
-        curr_class = apex.Class("{}{}".format(prefix, name))
+    def parse_json_schema(self, schema, name):
+        curr_class = apex.Class("{}{}".format(self.prefix, name))
 
-        for name, prop in schema['properties'].items():
-            name = name if len(name+prefix) <= 40 else name[:39-len(prefix)]
-            data_type = prop['type']
+        for prop_name, prop_data in schema['properties'].items():
+            prop_name = self.trim_prop_name(prop_name)
+            data_type = prop_data['type']
 
             if data_type in PRIMITIVES:
-                print("Primitive: {} {}".format(data_type, name))
                 data_type = 'decimal' if data_type == 'number' else data_type
-                curr_class.members.append(apex.Member(name, data_type.capitalize()))
+                curr_class.members.append(apex.Member(prop_name, data_type.capitalize()))
 
             elif data_type == 'array':
-                print("Array: {} {}".format(data_type, name))
-
-                props_to_process = []
-
-                if prop['items'].get('anyOf') != None:
-                    props_to_process.extend(prop['items']['anyOf'])
-                else:
-                    props_to_process.append(prop['items'])
-
-                for i, p in enumerate(props_to_process):
-
-                    if p['type'] in PRIMITIVES or isinstance(p['type'], list):
-                        data_type = ''
-                        if isinstance(p['type'], list):
-                            data_type = p['type'][0]
-                        else:
-                            data_type = p['type']
-                        data_type = 'decimal' if data_type == 'number' else data_type
-                        curr_class.members.append(
-                            apex.Member(name if i < 1 else name + "_" + str(i), "{}[]".format(data_type.capitalize()))
-                        )
-
-                    elif p['type'] == 'object':
-                        var_name = ""
-                        if name in class_count:
-                            class_count[name] += 1
-                            var_name = "{}{}".format(name, class_count[name])
-
-                        else:
-                            class_count[name] = 0
-                            var_name = name
-                        
-                        ApexGenerator.parse_json_schema(p,prefix,var_name.capitalize(),classes,class_count)
-                        curr_class.members.append(
-                            apex.Member(name if i < 1 else name + "_" + str(i),"{}{}[]".format(prefix,var_name.capitalize()))
-                        )
-
+                self.parse_array(curr_class, prop_data, prop_name)
                     
             elif data_type == 'object':
-                print("Object: {}".format(name))
-                var_name = ""
-                if name in class_count:
-                    class_count[name] += 1
-                    var_name = "{}{}".format(name, class_count[name])
+                self.parse_object(curr_class, prop_data, prop_name)
 
-                else:
-                    class_count[name] = 0
-                    var_name = name
-                
-                ApexGenerator.parse_json_schema(prop,prefix,var_name.capitalize(),classes,class_count)
+            elif isinstance(data_type, list):
                 curr_class.members.append(
-                    apex.Member(name, "{}{}".format(prefix,var_name.capitalize()))
+                    apex.Member(name, data_type[0].capitalize())
                 )
             
-        classes.append(curr_class)
+        self.classes.append(curr_class)
 
+    def parse_object(self, curr_class, prop_data, var_name):
+        if var_name in self.class_count:
+            self.class_count[var_name] += 1
+            var_name = "{}{}".format(var_name, self.class_count[var_name])
+        else:
+            self.class_count[var_name] = 0
+        
+        self.parse_json_schema(prop_data, var_name.capitalize())
+        curr_class.members.append(
+            apex.Member(var_name, "{}{}".format(self.prefix, var_name.capitalize()))
+        )
+    
+    def parse_primitive_array(self, curr_class, prop_type, prop_name):
+        prop_type = 'decimal' if prop_type == 'number' else prop_type
+        curr_class.members.append(
+            apex.Member(prop_name, "{}[]".format(prop_type.capitalize()))
+        )
 
+    def parse_array(self, curr_class, prop_data, prop_name):
+        if prop_data['items'].get('anyOf') != None:
+            prop_data = prop_data['items']['anyOf'][0]
+        else:
+            prop_data = prop_data['items']
+
+        prop_type = prop_data['type']
+
+        if prop_type in PRIMITIVES:
+            self.parse_primitive_array(curr_class, prop_type, prop_name)
+
+        elif prop_type == 'object':
+            self.parse_object(curr_class, prop_data, prop_name)
+    
+    def trim_prop_name(self, prop_name):
+        return prop_name if len(prop_name + self.prefix) <= 40 else prop_name[:39 - len(self.prefix)]

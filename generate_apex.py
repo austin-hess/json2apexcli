@@ -1,6 +1,8 @@
+#!/usr/bin/env python
+
 import json
 import click
-from apex_generator import ApexGenerator
+from apex_generator import Json2ApexGenerator
 
 @click.command(
     help="USAGE: ./generate-schema.py --schemapath ./schema.json --classname Main --prefix NS --outputdir ./output/"
@@ -31,6 +33,13 @@ from apex_generator import ApexGenerator
     help="Use --outputdir to specify which directory you want the Apex classes to be dropped in"
 )
 def main(s, c, p, o):
+    print(s, c, p, o)
     with open(s, 'r') as f:
         json_schema = json.loads(f.read())
-        ApexGenerator.from_json_schema(json_schema, c, prefix=p, output_path=o)
+        generator = Json2ApexGenerator(json_schema)
+        generator.set_output_path(o)
+        generator.set_prefix(p)
+        generator.generate(c)
+
+if __name__ == '__main__':
+    main()

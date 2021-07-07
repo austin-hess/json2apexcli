@@ -44,6 +44,7 @@ class Class:
                 if self.definition_mod is not ClassDefinitionType.INTERFACE
             else "{} interface {} {\n".format(self.access_mod, self.name)
         )
+        cls_output += "\tpublic {}() {{}}\n".format(self.name)
         for member in sorted(self.members, key=lambda x: getattr(x, 'name')):
             cls_output += "\t{}\n".format(member.write())
         cls_output += "}"
@@ -78,6 +79,14 @@ class Member:
     
     def write(self):
         return "{} {}{}{} {};".format(self.access_mod.value, "static" if self.is_static else "", "final" if self.is_final else "", self.data_type, self.name)
+
+    def __hash__(self):
+        h = hashlib.sha256()
+        h.update(str.encode(self.write(no_name=True)))
+        return int.from_bytes(h.digest(), byteorder="little")
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
 
 KEYWORDS = ["abstract",
 "activate",
