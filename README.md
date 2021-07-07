@@ -10,7 +10,7 @@ Python CLI for accomplishing the following:
 
 ### Installation
 ```
-git clone https://bitbucket.org/nicoletbank/json2apexcli.git
+git clone https://github.com/hessbag/json2apexcli.git
 cd ./json2apexcli && pip install -r requirements.txt
 ```
 
